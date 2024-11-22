@@ -1,2 +1,2 @@
 # StudySphere
- A Group Study Platform
+A group study Platform created using JavaFX and PostgreSQL

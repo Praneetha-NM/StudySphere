@@ -1,0 +1,40 @@
+/* styles.css */
+
+#side-pane {
+    background-color: #f4f4f4; /* Light background for the side pane */
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    width: 200px;
+}
+
+#button {
+    background-color: #ff9800; /* Orange background for buttons */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#button:hover {
+    background-color: #e68900; /* Darker orange on hover */
+}
+
+#calendar-pane {
+    background-color: #fff; /* White background for the calendar pane */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.title-label {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#assignment-area {
+    min-height: 100px; /* Minimum height for the assignment area */
+    resize: none; /* Disable resizing */
+}

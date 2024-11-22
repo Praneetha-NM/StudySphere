@@ -14,7 +14,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
 public class StudySphereUserDetails extends Application {
+    // Database connection constants
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/studysphere"; // Change to your database name
+    private static final String USER = "myuser"; // Change to your username
+    private static final String PASSWORD = "12345"; // Change to your password
 
     @Override
     public void start(Stage primaryStage) {
@@ -39,7 +47,7 @@ public class StudySphereUserDetails extends Application {
         nameLabel.setFont(new Font("Arial Narrow", 16));
         nameLabel.setTextFill(Color.GREY); // Set label text color to light gray
         nameLabel.setAlignment(Pos.CENTER_LEFT);
-        
+
         TextField nameField = new TextField();
         nameField.setPromptText("E.g. John Gilbert");
         nameField.setStyle("-fx-font-size: 16px; -fx-pref-width: 350px; -fx-pref-height: 50px; -fx-background-color: #ECF0F1; -fx-padding: 10px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
@@ -49,7 +57,7 @@ public class StudySphereUserDetails extends Application {
         institutionLabel.setFont(new Font("Arial Narrow", 16));
         institutionLabel.setTextFill(Color.GREY); // Set label text color to light gray
         institutionLabel.setAlignment(Pos.CENTER_LEFT);
-        
+
         TextField institutionField = new TextField();
         institutionField.setPromptText("E.g. Harvard University");
         institutionField.setStyle("-fx-font-size: 16px; -fx-pref-width: 350px; -fx-pref-height: 50px; -fx-background-color: #ECF0F1; -fx-padding: 10px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
@@ -57,7 +65,7 @@ public class StudySphereUserDetails extends Application {
         // Create a submit button
         Button submitButton = new Button("Submit");
         submitButton.setMinWidth(350);  // Set minimum width
-        submitButton.setMinHeight(50); 
+        submitButton.setMinHeight(50);
         submitButton.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 10px; -fx-pref-width: 350px; -fx-border-radius: 5px; -fx-pref-height: 50px;");
 
         // Button hover effects
@@ -66,10 +74,13 @@ public class StudySphereUserDetails extends Application {
 
         // Add action for the submit button
         submitButton.setOnAction(e -> {
-            // Add submit functionality here
             String name = nameField.getText();
             String institution = institutionField.getText();
-            System.out.println("Name: " + name + ", Institution: " + institution);
+            if (insertUserDetails(name, institution)) {
+                System.out.println("User details submitted: Name: " + name + ", Institution: " + institution);
+            } else {
+                System.out.println("Failed to submit user details.");
+            }
         });
 
         // Add title, labels, and text fields to the VBox
@@ -89,6 +100,21 @@ public class StudySphereUserDetails extends Application {
         primaryStage.setTitle("StudySphere - User Details");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    // Method to insert user details into the database
+    private boolean insertUserDetails(String name, String institution) {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+            String sql = "INSERT INTO users (full_name, university_name) VALUES (?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, institution);
+            pstmt.executeUpdate(); // Execute the insert statement
+            return true; // Insert successful
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Insert failed
     }
 
     public static void main(String[] args) {

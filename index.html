@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <script src="https://media.twilio.com/sdk/js/video/releases/2.0.0/twilio-video.min.js"></script>
+    <style>
+        #remote-video {
+            width: 50%;
+            height: 300px;
+            background-color: black;
+        }
+        #local-video {
+            width: 25%;
+            height: 150px;
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h2>Meeting Room</h2>
+    <div id="remote-video"></div>
+    <div id="local-video"></div>
+</div>
+
+<script>
+    // Replace with your actual Twilio credentials
+    const token = 'YOUR_TWILIO_ACCESS_TOKEN';
+    const roomName = 'meeting-room';
+
+    Twilio.Video.connect(token, { name: roomName }).then(room => {
+        console.log(`Successfully joined room: ${room.name}`);
+
+        room.participants.forEach(participant => {
+            participant.tracks.forEach(publication => {
+                if (publication.isSubscribed) {
+                    const track = publication.track;
+                    document.getElementById('remote-video').appendChild(track.attach());
+                }
+            });
+
+            participant.on('trackSubscribed', track => {
+                document.getElementById('remote-video').appendChild(track.attach());
+            });
+        });
+
+        const localVideoTrack = Twilio.Video.createLocalVideoTrack();
+        localVideoTrack.then(track => {
+            document.getElementById('local-video').appendChild(track.attach());
+        });
+    });
+</script>
+
+</body>
+</html>
